@@ -1,47 +1,67 @@
 <template>
-  <div ref="chartContainer" class="chart-container">
+  <div class="chart-container">
     <div v-show="!dataSources" class="warning data-view-warning">
       There is no data to build a chart. Run your SQL query and make sure the
       result is not empty.
     </div>
-    <div
+    <splitpanes
+      :before="{ size: 70, max: 100 }"
+      :after="{ size: 30, max: 50, hidden: !showValueViewer }"
+      :default="{ before: 70, after: 30 }"
       class="chart"
       :style="{ height: !dataSources ? 'calc(100% - 40px)' : '100%' }"
     >
-      <PlotlyEditor
-        ref="plotlyEditor"
-        :data="state.data"
-        :layout="state.layout"
-        :frames="state.frames"
-        :config="config"
-        :dataSources="dataSources"
-        :dataSourceOptions="dataSourceOptions"
-        :plotly="plotly"
-        :useResizeHandler="useResizeHandler"
-        :debug="true"
-        :advancedTraceTypeSelector="true"
-        :hideControls="!showViewSettings"
-        @update="update"
-        @render="onRender"
-      />
-    </div>
+      <template #left-pane>
+        <div ref="chartContainer" :style="{ height: '100%' }">
+          <PlotlyEditor
+            ref="plotlyEditor"
+            :data="state.data"
+            :layout="state.layout"
+            :frames="state.frames"
+            :config="config"
+            :dataSources="dataSources"
+            :dataSourceOptions="dataSourceOptions"
+            :plotly="plotly"
+            :useResizeHandler="useResizeHandler"
+            :debug="true"
+            :advancedTraceTypeSelector="true"
+            :hideControls="!showViewSettings"
+            @update="update"
+            @render="onRender"
+          />
+        </div>
+      </template>
+      <template v-if="showValueViewer" #right-pane>
+        <value-viewer
+          :empty="!selectedItem"
+          emptyMessage="No points selected to view"
+          :value="JSON.stringify(selectedItem)"
+          defaultFormat="json"
+        />
+      </template>
+    </splitpanes>
   </div>
 </template>
 
 <script>
 import { applyPureReactInVue } from 'veaury'
-import plotly from 'plotly.js'
+import plotly from 'plotly.js/dist/plotly'
 import 'react-chart-editor/lib/react-chart-editor.css'
 import ReactPlotlyEditorWithPlotRef from '@/lib/ReactPlotlyEditorWithPlotRef.jsx'
 import chartHelper from '@/lib/chartHelper'
 import * as dereference from 'react-chart-editor/lib/lib/dereference'
 import fIo from '@/lib/utils/fileIo'
 import events from '@/lib/utils/events'
+import Splitpanes from '@/components/Common/Splitpanes'
+import ValueViewer from '@/components/ValueViewer.vue'
+import { nextTick } from 'vue'
 
 export default {
   name: 'Chart',
   components: {
-    PlotlyEditor: applyPureReactInVue(ReactPlotlyEditorWithPlotRef)
+    PlotlyEditor: applyPureReactInVue(ReactPlotlyEditorWithPlotRef),
+    Splitpanes,
+    ValueViewer
   },
   props: {
     dataSources: Object,
@@ -49,7 +69,8 @@ export default {
     exportToPngEnabled: Boolean,
     exportToSvgEnabled: Boolean,
     forPivot: Boolean,
-    showViewSettings: Boolean
+    showViewSettings: Boolean,
+    showValueViewer: Boolean
   },
   emits: [
     'update:exportToSvgEnabled',
@@ -71,7 +92,8 @@ export default {
         modeBarButtonsToRemove: ['toImage']
       },
       resizeObserver: null,
-      useResizeHandler: this.$store.state.isWorkspaceVisible
+      useResizeHandler: this.$store.state.isWorkspaceVisible,
+      selectedItem: null
     }
   },
   computed: {
@@ -115,13 +137,25 @@ export default {
     this.$emit('update:exportToSvgEnabled', true)
     this.$emit('update:exportToHtmlEnabled', true)
   },
-  mounted() {
+  async mounted() {
     this.resizeObserver = new ResizeObserver(this.handleResize)
     this.resizeObserver.observe(this.$refs.chartContainer)
     if (this.dataSources) {
       dereference.default(this.state.data, this.dataSources)
     }
     this.handleResize()
+    await nextTick()
+    const plotlyDiv =
+      this.$refs.plotlyEditor.$el.querySelector('.js-plotly-plot')
+    plotlyDiv?.on('plotly_selected', selectionEvent => {
+      if (selectionEvent) {
+        console.log(this.dataSources)
+        this.selectedItem = 1
+      }
+    })
+    plotlyDiv?.on('plotly_deselect', () => {
+      this.selectedItem = null
+    })
   },
   activated() {
     this.useResizeHandler = true

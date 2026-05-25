@@ -58,9 +58,9 @@
       </icon-button>
 
       <icon-button
-        v-if="mode === 'graph'"
+        v-if="mode !== 'pivot'"
         ref="viewNodeOrEdgeBtn"
-        tooltip="View node or edge details"
+        tooltip="View details"
         tooltipPosition="top-left"
         :active="viewValuePanelVisible"
         @click="viewValuePanelVisible = !viewValuePanelVisible"
