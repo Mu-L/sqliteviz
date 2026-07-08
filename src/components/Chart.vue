@@ -149,7 +149,6 @@ export default {
       this.$refs.plotlyEditor.$el.querySelector('.js-plotly-plot')
     plotlyDiv?.on('plotly_selected', selectionEvent => {
       if (selectionEvent) {
-        console.log(this.dataSources)
         this.selectedItem = 1
       }
     })
@@ -178,6 +177,10 @@ export default {
       // TODO: check changes and enable Save button if needed
     },
     update(data, layout, frames) {
+      if (layout.selections?.length > 0) {
+        layout.selections = []
+        data.forEach(dataItem => delete dataItem.selectedpoints)
+      }
       this.state = { data, layout, frames }
       this.$emit('update')
     },
