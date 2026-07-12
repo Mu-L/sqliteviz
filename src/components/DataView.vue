@@ -58,7 +58,7 @@
       </icon-button>
 
       <icon-button
-        v-if="mode !== 'pivot'"
+        v-if="mode === 'graph'"
         ref="viewNodeOrEdgeBtn"
         tooltip="View details"
         tooltipPosition="top-left"

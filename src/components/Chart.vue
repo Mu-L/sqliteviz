@@ -81,11 +81,13 @@ export default {
   data() {
     return {
       plotly,
-      state: this.initOptions || {
-        data: [],
-        layout: { autosize: true },
-        frames: []
-      },
+      state: this.initOptions
+        ? JSON.parse(JSON.stringify(this.initOptions))
+        : {
+            data: [],
+            layout: { autosize: true },
+            frames: []
+          },
       config: {
         editable: true,
         displaylogo: false,
@@ -146,7 +148,7 @@ export default {
     this.handleResize()
     await nextTick()
     const plotlyDiv =
-      this.$refs.plotlyEditor.$el.querySelector('.js-plotly-plot')
+      this.$refs.plotlyEditor?.$el?.querySelector('.js-plotly-plot')
     plotlyDiv?.on('plotly_selected', selectionEvent => {
       if (selectionEvent) {
         this.selectedItem = 1
@@ -177,7 +179,7 @@ export default {
       // TODO: check changes and enable Save button if needed
     },
     update(data, layout, frames) {
-      if (layout.selections?.length > 0) {
+      if (layout?.selections?.length > 0) {
         layout.selections = []
         data.forEach(dataItem => delete dataItem.selectedpoints)
       }
