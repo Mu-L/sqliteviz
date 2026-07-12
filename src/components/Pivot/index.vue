@@ -19,6 +19,7 @@
       <chart
         ref="customChart"
         v-bind="customChartComponentProps"
+        :showViewSettings="showViewSettings"
         @update="$emit('update')"
         @loading-image-completed="$emit('loadingImageCompleted')"
       />
