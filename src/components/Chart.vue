@@ -45,7 +45,7 @@
 
 <script>
 import { applyPureReactInVue } from 'veaury'
-import plotly from 'plotly.js/dist/plotly'
+import plotly from 'plotly.js'
 import 'react-chart-editor/lib/react-chart-editor.css'
 import ReactPlotlyEditorWithPlotRef from '@/lib/ReactPlotlyEditorWithPlotRef.jsx'
 import chartHelper from '@/lib/chartHelper'
