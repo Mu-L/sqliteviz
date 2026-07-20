@@ -5,7 +5,7 @@ import migration from './_migrations'
 
 const migrate = migration._migrate
 const myInquiriesKey = 'myInquiries'
-const latestVersion = 4
+const latestVersion = 5
 
 export default {
   version: latestVersion,

@@ -33,9 +33,9 @@
       </template>
       <template v-if="showValueViewer" #right-pane>
         <value-viewer
-          :empty="!selectedItem"
+          :empty="!selectedItems || selectedItems.length === 0"
           emptyMessage="No points selected to view"
-          :value="JSON.stringify(selectedItem)"
+          :value="JSON.stringify(selectedItems)"
           defaultFormat="json"
         />
       </template>
@@ -95,7 +95,7 @@ export default {
       },
       resizeObserver: null,
       useResizeHandler: this.$store.state.isWorkspaceVisible,
-      selectedItem: null
+      selectedItems: null
     }
   },
   computed: {
@@ -105,6 +105,7 @@ export default {
   },
   watch: {
     dataSources() {
+      chartHelper.clearSelection(this.state.data, this.state.layout)
       // we need to update state.data in order to update the graph
       // https://github.com/plotly/react-chart-editor/issues/948
       if (this.dataSources) {
@@ -151,11 +152,14 @@ export default {
       this.$refs.plotlyEditor?.$el?.querySelector('.js-plotly-plot')
     plotlyDiv?.on('plotly_selected', selectionEvent => {
       if (selectionEvent) {
-        this.selectedItem = 1
+        this.selectedItems = chartHelper.getRowsByIndexFromDataSources(
+          this.dataSources,
+          selectionEvent.points.map(point => point.pointIndex)
+        )
       }
     })
     plotlyDiv?.on('plotly_deselect', () => {
-      this.selectedItem = null
+      this.selectedItems = null
     })
   },
   activated() {
@@ -179,10 +183,8 @@ export default {
       // TODO: check changes and enable Save button if needed
     },
     update(data, layout, frames) {
-      if (layout?.selections?.length > 0) {
-        layout.selections = []
-        data.forEach(dataItem => delete dataItem.selectedpoints)
-      }
+      chartHelper.clearSelection(data, layout)
+
       this.state = { data, layout, frames }
       this.$emit('update')
     },

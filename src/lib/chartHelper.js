@@ -13,6 +13,27 @@ export function getOptionsFromDataSources(dataSources) {
   }))
 }
 
+export function getRowsByIndexFromDataSources(dataSources, rowIndexes) {
+  if (!dataSources) {
+    return []
+  }
+
+  const dataSourceColumns = Object.keys(dataSources)
+  return rowIndexes.map(rowIndex =>
+    dataSourceColumns.reduce((result, columnName) => {
+      result[columnName] = dataSources[columnName][rowIndex]
+      return result
+    }, {})
+  )
+}
+
+export function clearSelection(data, layout) {
+  if (layout?.selections?.length > 0) {
+    layout.selections = []
+    data.forEach(dataItem => delete dataItem.selectedpoints)
+  }
+}
+
 export function getOptionsForSave(state, dataSources) {
   // we don't need to save the data, only settings
   // so we modify state.data using dereference
@@ -22,6 +43,9 @@ export function getOptionsForSave(state, dataSources) {
     emptySources[key] = []
   }
   dereference.default(stateCopy.data, emptySources)
+
+  // Also, we don't need to save selections
+  clearSelection(stateCopy.data, stateCopy.layout)
   return stateCopy
 }
 
@@ -72,5 +96,7 @@ export default {
   getOptionsForSave,
   getImageDataUrl,
   getHtml,
-  getChartData
+  getChartData,
+  getRowsByIndexFromDataSources,
+  clearSelection
 }

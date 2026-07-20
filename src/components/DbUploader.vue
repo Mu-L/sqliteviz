@@ -125,6 +125,13 @@ export default {
     },
 
     async checkFile(file) {
+      if (!file) {
+        alert(
+          'You should drop a file. ' +
+            'It can be an SQLite database, CSV file, JSON or NDJSON file.'
+        )
+        return
+      }
       this.state = 'dropping'
       this.newDb = database.getNewDatabase()
 

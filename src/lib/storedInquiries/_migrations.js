@@ -1,3 +1,5 @@
+import { clearSelection } from '@/lib/chartHelper'
+
 export default {
   _migrate(installedVersion, inquiries) {
     if (installedVersion < 2) {
@@ -24,6 +26,14 @@ export default {
           inquiry.viewOptions.layout.type === 'forceAtlas2'
         ) {
           inquiry.viewOptions.layout.options.initialAlgorithm = 'circular'
+        }
+      })
+    }
+
+    if (installedVersion < 5) {
+      inquiries.forEach(inquiry => {
+        if (inquiry.viewType === 'chart') {
+          clearSelection(inquiry.viewOptions.data, inquiry.viewOptions.layout)
         }
       })
     }
