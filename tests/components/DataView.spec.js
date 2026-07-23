@@ -429,37 +429,44 @@ describe('DataView.vue', () => {
       }
     })
 
-    // viewNodeOrEdgeBtn is not disaplyed in chart mode
-    expect(
-      wrapper.findComponent({ ref: 'viewNodeOrEdgeBtn' }).exists()
-    ).to.equal(false)
+    // viewDetailsBtn is disaplyed in chart mode
+    expect(wrapper.findComponent({ ref: 'viewDetailsBtn' }).exists()).to.equal(
+      true
+    )
 
     // Switch to pivot
     const pivotBtn = wrapper.findComponent({ ref: 'pivotBtn' })
     await pivotBtn.trigger('click')
 
-    // viewNodeOrEdgeBtn is not disaplyed in pivot mode
-    expect(
-      wrapper.findComponent({ ref: 'viewNodeOrEdgeBtn' }).exists()
-    ).to.equal(false)
+    // viewDetailsBtn is not disaplyed in pivot mode
+    expect(wrapper.findComponent({ ref: 'viewDetailsBtn' }).exists()).to.equal(
+      false
+    )
 
     // Switch to graph
     const graphBtn = wrapper.findComponent({ ref: 'graphBtn' })
     await graphBtn.trigger('click')
 
-    // viewNodeOrEdgeBtn is disaplyed in graph mode
-    const viewNodeOrEdgeBtn = wrapper.findComponent({
-      ref: 'viewNodeOrEdgeBtn'
+    // viewDetailsBtn is disaplyed in graph mode
+    const viewDetailsBtn = wrapper.findComponent({
+      ref: 'viewDetailsBtn'
     })
-    expect(viewNodeOrEdgeBtn.exists()).to.equal(true)
+    expect(viewDetailsBtn.exists()).to.equal(true)
 
-    // by default node viewer is hidden
+    // by default details viewer is hidden
     expect(wrapper.findComponent({ name: 'value-viewer' }).exists()).to.equal(
       false
     )
 
-    // Click to show node viewer
-    await viewNodeOrEdgeBtn.trigger('click')
+    // Click to show details viewer
+    await viewDetailsBtn.trigger('click')
+    expect(wrapper.findComponent({ name: 'value-viewer' }).exists()).to.equal(
+      true
+    )
+
+    // Switch to chart
+    const chartBtn = wrapper.findComponent({ ref: 'chartBtn' })
+    await chartBtn.trigger('click')
     expect(wrapper.findComponent({ name: 'value-viewer' }).exists()).to.equal(
       true
     )

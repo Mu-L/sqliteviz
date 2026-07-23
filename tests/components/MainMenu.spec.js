@@ -210,8 +210,8 @@ describe('MainMenu.vue', () => {
       isSaved: false
     }
     const state = {
-      currentTab: tab,
-      tabs: [tab],
+      currentTab: null,
+      tabs: [],
       db: {}
     }
     const store = createStore({ state })
@@ -228,6 +228,17 @@ describe('MainMenu.vue', () => {
 
     const ctrlR = new KeyboardEvent('keydown', { key: 'r', ctrlKey: true })
     const metaR = new KeyboardEvent('keydown', { key: 'r', metaKey: true })
+
+    // execute is not called - no tabs open
+    document.dispatchEvent(ctrlR)
+    expect(tab.execute.calledOnce).to.equal(false)
+    document.dispatchEvent(metaR)
+    expect(tab.execute.calledOnce).to.equal(false)
+
+    // Open a tab
+    store.state.currentTab = tab
+    store.state.tabs = [tab]
+
     // Running is enabled and route path is workspace
     document.dispatchEvent(ctrlR)
     expect(state.currentTab.execute.calledOnce).to.equal(true)
@@ -257,8 +268,8 @@ describe('MainMenu.vue', () => {
       isSaved: false
     }
     const state = {
-      currentTab: tab,
-      tabs: [tab],
+      currentTab: null,
+      tabs: [],
       db: {}
     }
     const store = createStore({ state })
@@ -281,6 +292,17 @@ describe('MainMenu.vue', () => {
       key: 'Enter',
       metaKey: true
     })
+
+    // execute is not called - no tabs open
+    document.dispatchEvent(ctrlEnter)
+    expect(tab.execute.calledOnce).to.equal(false)
+    document.dispatchEvent(metaEnter)
+    expect(tab.execute.calledOnce).to.equal(false)
+
+    // Open a tab
+    store.state.currentTab = tab
+    store.state.tabs = [tab]
+
     // Running is enabled and route path is workspace
     document.dispatchEvent(ctrlEnter)
     expect(state.currentTab.execute.calledOnce).to.equal(true)
@@ -347,8 +369,8 @@ describe('MainMenu.vue', () => {
       isSaved: false
     }
     const state = {
-      currentTab: tab,
-      tabs: [tab],
+      currentTab: null,
+      tabs: [],
       db: {}
     }
     const store = createStore({ state })
@@ -365,6 +387,17 @@ describe('MainMenu.vue', () => {
 
     const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true })
     const metaS = new KeyboardEvent('keydown', { key: 's', metaKey: true })
+
+    // onSave is not called - no tabs open
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.onSave.calledOnce).to.equal(false)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.onSave.calledOnce).to.equal(false)
+
+    // Open a tab
+    store.state.currentTab = tab
+    store.state.tabs = [tab]
+
     // tab is unsaved and route is /workspace
     document.dispatchEvent(ctrlS)
     expect(wrapper.vm.onSave.calledOnce).to.equal(true)
@@ -394,8 +427,8 @@ describe('MainMenu.vue', () => {
       isSaved: false
     }
     const state = {
-      currentTab: tab,
-      tabs: [tab],
+      currentTab: null,
+      tabs: [],
       db: {}
     }
     const store = createStore({ state })
@@ -420,6 +453,17 @@ describe('MainMenu.vue', () => {
       metaKey: true,
       shiftKey: true
     })
+
+    // onSaveAs is not called - no tabs open
+    document.dispatchEvent(ctrlS)
+    expect(wrapper.vm.onSaveAs.calledOnce).to.equal(false)
+    document.dispatchEvent(metaS)
+    expect(wrapper.vm.onSaveAs.calledOnce).to.equal(false)
+
+    // Open a tab
+    store.state.currentTab = tab
+    store.state.tabs = [tab]
+
     // tab is unsaved and route is /workspace
     document.dispatchEvent(ctrlS)
     expect(wrapper.vm.onSaveAs.calledOnce).to.equal(true)

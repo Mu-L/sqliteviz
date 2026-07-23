@@ -59,7 +59,7 @@
 
       <icon-button
         v-if="mode !== 'pivot'"
-        ref="viewNodeOrEdgeBtn"
+        ref="viewDetailsBtn"
         tooltip="View details"
         tooltipPosition="top-left"
         :active="viewValuePanelVisible"
