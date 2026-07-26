@@ -117,7 +117,11 @@ describe('storedInquiries.js', () => {
             id: 'Yh1Hc9v7P3mRPZVM59QiD',
             query: 'SELECT * from test',
             viewType: 'chart',
-            viewOptions: 'some chart view options',
+            viewOptions: {
+              data: [{ selectedpoints: [] }, {}],
+              layout: { selections: [{}, {}] },
+              frames: 'some chart frames'
+            },
             name: 'student chart',
             updatedAt: '2026-01-19T21:49:40.708Z',
             createdAt: '2026-01-19T21:46:13.899Z'
@@ -186,7 +190,11 @@ describe('storedInquiries.js', () => {
         id: 'Yh1Hc9v7P3mRPZVM59QiD',
         query: 'SELECT * from test',
         viewType: 'chart',
-        viewOptions: 'some chart view options',
+        viewOptions: {
+          data: [{}, {}],
+          layout: { selections: [] },
+          frames: 'some chart frames'
+        },
         name: 'student chart',
         updatedAt: '2026-01-19T21:49:40.708Z',
         createdAt: '2026-01-19T21:46:13.899Z'
@@ -275,7 +283,7 @@ describe('storedInquiries.js', () => {
     const str = storedInquiries.serialiseInquiries(inquiryList)
     const parsedJson = JSON.parse(str)
 
-    expect(parsedJson.version).to.equal(4)
+    expect(parsedJson.version).to.equal(5)
     expect(parsedJson.inquiries).to.have.lengthOf(2)
     expect(parsedJson.inquiries[1]).to.eql(inquiryList[1])
     expect(parsedJson.inquiries[0]).to.eql({
@@ -336,7 +344,11 @@ describe('storedInquiries.js', () => {
           "name": "foo",
           "query": "select * from foo",
           "viewType": "chart",
-          "viewOptions": [],
+          "viewOptions": {
+              "data": [{"selectedpoints": []}, {}],
+              "layout": {"selections": [{}, {}]},
+              "frames": "some chart frames"
+            },
           "createdAt": "2020-11-03T14:17:49.524Z" 
         },
         {
@@ -401,7 +413,11 @@ describe('storedInquiries.js', () => {
         name: 'foo',
         query: 'select * from foo',
         viewType: 'chart',
-        viewOptions: [],
+        viewOptions: {
+          data: [{}, {}],
+          layout: { selections: [] },
+          frames: 'some chart frames'
+        },
         createdAt: '2020-11-03T14:17:49.524Z'
       },
       {
@@ -607,7 +623,11 @@ describe('storedInquiries.js', () => {
           "name": "foo",
           "query": "select * from foo",
           "viewType": "chart",
-          "viewOptions": [],
+          "viewOptions": {
+              "data": [{"selectedpoints": []}, {}],
+              "layout": {"selections": [{}, {}]},
+              "frames": "some chart frames"
+            },
           "createdAt": "2020-11-03T14:17:49.524Z" 
         },
         {
@@ -673,7 +693,11 @@ describe('storedInquiries.js', () => {
         name: 'foo',
         query: 'select * from foo',
         viewType: 'chart',
-        viewOptions: [],
+        viewOptions: {
+          data: [{}, {}],
+          layout: { selections: [] },
+          frames: 'some chart frames'
+        },
         createdAt: '2020-11-03T14:17:49.524Z'
       },
       {
@@ -735,7 +759,7 @@ describe('storedInquiries.js', () => {
 
   it('readPredefinedInquiries', async () => {
     const str = `{
-      "version": 4,
+      "version": 5,
       "inquiries": [
         {
           "id": 1,
