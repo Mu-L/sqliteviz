@@ -244,4 +244,287 @@ describe('Chart.vue', () => {
     )
     wrapper.unmount()
   })
+
+  it('selections are shown in value viewer', async () => {
+    const dataSources = {
+      name: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+      points: [100, 90, 95, 80]
+    }
+    const wrapper = mount(Chart, {
+      attachTo: document.body,
+      props: {
+        dataSources,
+        initOptions: {
+          data: [
+            {
+              type: 'scatter',
+              mode: 'markers',
+              x: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+              xsrc: 'name',
+              meta: {
+                columnNames: {
+                  x: 'name',
+                  y: 'points'
+                }
+              },
+              y: [100, 90, 95, 80],
+              ysrc: 'points',
+              selectedpoints: [1, 2]
+            }
+          ],
+          layout: {
+            autosize: true,
+            mapbox: {
+              style: 'open-street-map'
+            },
+            dragmode: 'select',
+            selections: [
+              {
+                xref: 'x',
+                yref: 'y',
+                line: {
+                  width: 1,
+                  dash: 'dot'
+                },
+                type: 'rect',
+                x0: 0.6238202370500439,
+                y0: 98.1184336198663,
+                x1: 2.4324242756804213,
+                y1: 87.03915950334289
+              }
+            ],
+            title: {
+              subtitle: {
+                text: 'Click to enter Plot subtitle'
+              }
+            },
+            xaxis: {
+              range: [-0.20324846356453027, 3.20324846356453],
+              autorange: true,
+              type: 'category'
+            },
+            yaxis: {
+              range: [78.4909264565425, 101.5090735434575],
+              autorange: true,
+              type: 'linear'
+            }
+          },
+          frames: []
+        },
+        showViewSettings: true,
+        showValueViewer: true
+      },
+      global: {
+        mocks: { $store }
+      }
+    })
+
+    await flushPromises()
+    const valueViewerText = wrapper
+      .findComponent({ name: 'ValueViewer' })
+      .text()
+
+    expect(valueViewerText).to.contain(`"name": "Hufflepuff"`)
+    expect(valueViewerText).to.contain(`"points": 90`)
+
+    expect(valueViewerText).to.contain(`"name": "Ravenclaw"`)
+    expect(valueViewerText).to.contain(`"points": 95`)
+
+    expect(valueViewerText).not.to.contain(`"name": "Gryffindor"`)
+    expect(valueViewerText).not.to.contain(`"points": 100`)
+
+    expect(valueViewerText).not.to.contain(`"name": "Slytherin"`)
+    expect(valueViewerText).not.to.contain(`"points": 80`)
+    wrapper.unmount()
+  })
+
+  it('clears selections on dataSources change', async () => {
+    const dataSources = {
+      name: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+      points: [100, 90, 95, 80]
+    }
+    const wrapper = mount(Chart, {
+      attachTo: document.body,
+      props: {
+        dataSources,
+        initOptions: {
+          data: [
+            {
+              type: 'scatter',
+              mode: 'markers',
+              x: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+              xsrc: 'name',
+              meta: {
+                columnNames: {
+                  x: 'name',
+                  y: 'points'
+                }
+              },
+              y: [100, 90, 95, 80],
+              ysrc: 'points',
+              selectedpoints: [1, 2]
+            }
+          ],
+          layout: {
+            autosize: true,
+            mapbox: {
+              style: 'open-street-map'
+            },
+            dragmode: 'select',
+            selections: [
+              {
+                xref: 'x',
+                yref: 'y',
+                line: {
+                  width: 1,
+                  dash: 'dot'
+                },
+                type: 'rect',
+                x0: 0.6238202370500439,
+                y0: 98.1184336198663,
+                x1: 2.4324242756804213,
+                y1: 87.03915950334289
+              }
+            ],
+            title: {
+              subtitle: {
+                text: 'Click to enter Plot subtitle'
+              }
+            },
+            xaxis: {
+              range: [-0.20324846356453027, 3.20324846356453],
+              autorange: true,
+              type: 'category'
+            },
+            yaxis: {
+              range: [78.4909264565425, 101.5090735434575],
+              autorange: true,
+              type: 'linear'
+            }
+          },
+          frames: []
+        },
+        showViewSettings: true,
+        showValueViewer: true
+      },
+      global: {
+        mocks: { $store }
+      }
+    })
+
+    await flushPromises()
+    const valueViewerText = wrapper
+      .findComponent({ name: 'ValueViewer' })
+      .text()
+
+    expect(valueViewerText).to.contain(`"name": "Hufflepuff"`)
+    expect(valueViewerText).to.contain(`"name": "Ravenclaw"`)
+
+    await wrapper.setProps({
+      dataSources: {
+        name: ['Gryffindor', 'Hufflepuff'],
+        points: [100, 90]
+      }
+    })
+
+    await flushPromises()
+
+    expect(wrapper.findComponent({ name: 'ValueViewer' }).text()).equal(
+      `No points selected to view`
+    )
+    wrapper.unmount()
+  })
+
+  it('clears selections on changes in chart settings', async () => {
+    const dataSources = {
+      name: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+      points: [100, 90, 95, 80]
+    }
+    const wrapper = mount(Chart, {
+      attachTo: document.body,
+      props: {
+        dataSources,
+        initOptions: {
+          data: [
+            {
+              type: 'scatter',
+              mode: 'markers',
+              x: ['Gryffindor', 'Hufflepuff', 'Ravenclaw', 'Slytherin'],
+              xsrc: 'name',
+              meta: {
+                columnNames: {
+                  x: 'name',
+                  y: 'points'
+                }
+              },
+              y: [100, 90, 95, 80],
+              ysrc: 'points',
+              selectedpoints: [1, 2]
+            }
+          ],
+          layout: {
+            autosize: true,
+            mapbox: {
+              style: 'open-street-map'
+            },
+            dragmode: 'select',
+            selections: [
+              {
+                xref: 'x',
+                yref: 'y',
+                line: {
+                  width: 1,
+                  dash: 'dot'
+                },
+                type: 'rect',
+                x0: 0.6238202370500439,
+                y0: 98.1184336198663,
+                x1: 2.4324242756804213,
+                y1: 87.03915950334289
+              }
+            ],
+            title: {
+              subtitle: {
+                text: 'Click to enter Plot subtitle'
+              }
+            },
+            xaxis: {
+              range: [-0.20324846356453027, 3.20324846356453],
+              autorange: true,
+              type: 'category'
+            },
+            yaxis: {
+              range: [78.4909264565425, 101.5090735434575],
+              autorange: true,
+              type: 'linear'
+            }
+          },
+          frames: []
+        },
+        showViewSettings: true,
+        showValueViewer: true
+      },
+      global: {
+        mocks: { $store }
+      }
+    })
+
+    await flushPromises()
+    const valueViewerText = wrapper
+      .findComponent({ name: 'ValueViewer' })
+      .text()
+
+    expect(valueViewerText).to.contain(`"name": "Hufflepuff"`)
+    expect(valueViewerText).to.contain(`"name": "Ravenclaw"`)
+
+    // Add another trace
+    await wrapper.find('button.js-add-button').wrapperElement.click()
+
+    await flushPromises()
+
+    expect(wrapper.findComponent({ name: 'ValueViewer' }).text()).equal(
+      `No points selected to view`
+    )
+    wrapper.unmount()
+  })
 })
