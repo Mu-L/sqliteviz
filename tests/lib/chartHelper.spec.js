@@ -21,6 +21,19 @@ describe('chartHelper.js', () => {
     ])
   })
 
+  it('getSelectedPointsIndexes returns unique selected point indexes', () => {
+    const stateData = [
+      { selectedpoints: [1, 2, 3] },
+      { selectedpoints: [3, 4] },
+      { selectedpoints: [] },
+      {}
+    ]
+
+    const indexes = chartHelper.getSelectedPointsIndexes(stateData)
+
+    expect(indexes).to.eql([1, 2, 3, 4])
+  })
+
   it('getOptionsForSave', () => {
     const state = {
       data: [

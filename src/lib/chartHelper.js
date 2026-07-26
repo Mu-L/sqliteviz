@@ -13,6 +13,16 @@ export function getOptionsFromDataSources(dataSources) {
   }))
 }
 
+export function getSelectedPointsIndexes(stateData) {
+  if (!stateData) {
+    return []
+  }
+
+  return Array.from(
+    new Set(stateData.flatMap(data => data.selectedpoints || []))
+  )
+}
+
 export function getRowsByIndexFromDataSources(dataSources, rowIndexes) {
   if (!dataSources) {
     return []
@@ -98,5 +108,6 @@ export default {
   getHtml,
   getChartData,
   getRowsByIndexFromDataSources,
-  clearSelection
+  clearSelection,
+  getSelectedPointsIndexes
 }

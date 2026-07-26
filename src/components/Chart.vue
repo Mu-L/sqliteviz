@@ -105,10 +105,10 @@ export default {
   },
   watch: {
     dataSources() {
-      chartHelper.clearSelection(this.state.data, this.state.layout)
       // we need to update state.data in order to update the graph
       // https://github.com/plotly/react-chart-editor/issues/948
       if (this.dataSources) {
+        chartHelper.clearSelection(this.state.data, this.state.layout)
         dereference.default(this.state.data, this.dataSources)
         this.updatePlotly()
       }
@@ -152,14 +152,11 @@ export default {
       this.$refs.plotlyEditor?.$el?.querySelector('.js-plotly-plot')
     plotlyDiv?.on('plotly_selected', selectionEvent => {
       if (selectionEvent) {
-        this.selectedItems = chartHelper.getRowsByIndexFromDataSources(
-          this.dataSources,
-          selectionEvent.points.map(point => point.pointIndex)
-        )
+        this.selectedItems = this.getSelectedData()
       }
     })
     plotlyDiv?.on('plotly_deselect', () => {
-      this.selectedItems = null
+      this.selectedItems = this.getSelectedData()
     })
   },
   activated() {
@@ -219,6 +216,12 @@ export default {
     },
     prepareCopy(type = 'png') {
       return chartHelper.getImageDataUrl(this.$refs.plotlyEditor.$el, type)
+    },
+    getSelectedData() {
+      return chartHelper.getRowsByIndexFromDataSources(
+        this.dataSources,
+        chartHelper.getSelectedPointsIndexes(this.state.data)
+      )
     }
   }
 }
